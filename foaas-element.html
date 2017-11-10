@@ -1,13 +1,17 @@
-<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="bower_components/polymer/polymer-element.html">
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
 
 <dom-module id="foaas-element">
   <template>
     <style>
-      :host {
-        display: block;
+       :host {
+        display: inline;
       }
     </style>
-    <h2>Hello [[prop1]]!</h2>
+    <iron-ajax id="foaas_load" handle-as="json" headers='{"Accept": "application/json"}'>
+    </iron-ajax>
+    <div id="foaas_content"></div>
+    <div id="foaas_signature"></div>
   </template>
 
   <script>
@@ -28,6 +32,35 @@
             value: 'foaas-element'
           }
         };
+      }
+
+      ready() {
+        super.ready();
+        Polymer.RenderStatus.afterNextRender(this, function () {
+          this._loadFoaas();
+        });
+      }
+
+      _loadFoaas() {
+        let ajax = this.$.foaas_load;
+        ajax.url = "http://foaas.com/asshole/ben";
+        let self = this;
+        ajax.generateRequest().completes.then(response => {
+          self._processResponse(response);
+        },error => {
+          self._processError(error);
+        });
+      }
+
+
+      _processResponse(response) {
+        let foaas_response = response.__data.response;
+        this.$.foaas_content.textContent = foaas_response.message;
+        this.$.foaas_signature.textContent = foaas_response.subtitle;
+      }
+
+      _processError(error) {
+        this.$.foaas_content.textContent = "oups, there was a problem with you giving a fuck";
       }
     }
 
