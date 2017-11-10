@@ -60,18 +60,17 @@
 
       connectedCallback() {
         super.connectedCallback();
-        this._loadTypeDescriptions();
+        this._loadTypeDescriptions()
+        .then(this._processDescriptions.bind(this))
+        .then(this._processResponse.bind(this))
+        .catch(this._processError);
       }
 
       _loadFoaas() {
         let ajax = this.$.foaas_load;
         ajax.url = this._generateUrl();
         let self = this;
-        ajax.generateRequest().completes.then(response => {
-          self._processResponse(response);
-        }, error => {
-          self._processError(error);
-        });
+        return ajax.generateRequest().completes;
       }
 
       _processResponse(response) {
@@ -96,12 +95,10 @@
       }
 
       _loadTypeDescriptions() {
-        let ajax = this.$.foaas_load;
-        ajax.url = this.URL + "operations";
-        let self = this;
-        ajax.generateRequest().completes.then(response => {
-          self._processDescriptions(response);
-        });
+          let ajax = this.$.foaas_load;
+          ajax.url = this.URL + "operations";
+          let self = this;
+          return ajax.generateRequest().completes;
       }
 
       _processDescriptions(response) {
@@ -115,7 +112,7 @@
           let type = tab_api.shift();
           this._type_descriptions[type] = tab_api.map(elem => elem.substring(1));
         }
-        this._loadFoaas();
+        return this._loadFoaas();
       }
     }
 
