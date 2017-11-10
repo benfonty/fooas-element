@@ -5,7 +5,7 @@
 <dom-module id="foaas-element">
   <template>
     <style>
-       :host {
+      :host {
         display: inline;
       }
     </style>
@@ -33,10 +33,14 @@
           loading: {
             type: Boolean,
             value: false,
-            notify:true,
-            ReadOnly:true
+            notify: true,
+            ReadOnly: true,
+            reflectToAttribute: true
           },
-          type: String,
+          type: {
+            type: String,
+            observer:'_typeChanged'
+          },
           from: String,
           company: String,
           name: String,
@@ -50,33 +54,48 @@
         };
       }
 
-      constructor() {
-        super();
-        this._type_descriptions = {};
-        this.URL = "http://foaas.com/";
-      }
+      static get URL() { return "http://www.foaas.com/"; }
 
       connectedCallback() {
         super.connectedCallback();
-        this.loading = true;
-        this._loadTypeDescriptions()
-        .then(this._processDescriptions.bind(this))
-        .then(this._processResponse.bind(this))
-        .catch(this._processError);
+        this._loadFoaas();
+      }
+
+      _typeChanged(newValue, oldValue) {
+        if (oldValue !== undefined) {
+          this._loadFoaas();
+        }
       }
 
       _loadFoaas() {
+        this.loading = true;
+        if (this._type_descriptions === undefined) {
+          // First time : we have to load the list of operations 
+          this._loadTypeDescriptions()
+            .then(this._processDescriptions.bind(this))
+            .then(this._loadQuote.bind(this))
+            .then(this._processResponseQuote.bind(this))
+            .catch(this._processError.bind(this));
+        }
+        else {
+          this._loadQuote()
+            .then(this._processResponseQuote.bind(this))
+            .catch(this._processError.bind(this));
+        }
+      }
+
+      _loadQuote() {
         let ajax = this.$.foaas_load;
         ajax.url = this._generateUrl();
         let self = this;
         return ajax.generateRequest().completes;
       }
 
-      _processResponse(response) {
+      _processResponseQuote(response) {
         let foaas_response = response.__data.response;
         this.$.foaas_content.textContent = foaas_response.message;
         this.$.foaas_signature.textContent = foaas_response.subtitle;
-        this.loading=false;
+        this.loading = false;
       }
 
       _processError(error) {
@@ -85,7 +104,7 @@
       }
 
       _generateUrl() {
-        let url = this.URL;
+        let url = FoaasElement.URL;
         // First we add the type
         url += this.type + "/";
         // Then the parameters
@@ -96,13 +115,14 @@
       }
 
       _loadTypeDescriptions() {
-          let ajax = this.$.foaas_load;
-          ajax.url = this.URL + "operations";
-          let self = this;
-          return ajax.generateRequest().completes;
+        let ajax = this.$.foaas_load;
+        ajax.url = FoaasElement.URL + "operations";
+        let self = this;
+        return ajax.generateRequest().completes;
       }
 
       _processDescriptions(response) {
+        this._type_descriptions = {};
         let foaas_response = response.__data.response;
         for (let elem of foaas_response) { // forEach doesn't work here. wtf ?
           let tab_api = elem.url.split('/');
@@ -112,7 +132,7 @@
           let type = tab_api.shift();
           this._type_descriptions[type] = tab_api.map(elem => elem.substring(1));
         }
-        return this._loadFoaas();
+        return Promise.resolve();
       }
     }
 

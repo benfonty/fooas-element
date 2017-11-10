@@ -5,14 +5,16 @@
 <dom-module id="foaas-demo-loading">
   <template>
     <style>
-       :host {
+      :host {
         display: inline;
       }
     </style>
     <div hidden$="[[!foaasLoading]]">
       <paper-spinner active="{{foaasLoading}}"></paper-spinner>
     </div>
-    <foaas-element hidden$="[[foaasLoading]]" type="awesome" from="benoit" loading="{{foaasLoading}}"></foaas-element>
+    <div hidden$="{{foaasLoading}}">
+      <foaas-element id="myelement" type="awesome" from="benoit" loading="{{foaasLoading}}"></foaas-element>
+    </div>
   </template>
 
   <script>
@@ -30,13 +32,18 @@
         return {
           foaasLoading: {
             type: Boolean,
-            value: false,
-            observer:'_loading'
+            value: false
           }
         };
       }
-      _loading(newValue, oldValue) {
-        console.log(newValue);
+
+      ready() {
+        super.ready();
+        setTimeout(() => {
+          let myelement = this.$.myelement;
+          myelement.setAttribute("from", "unknown");
+          myelement.setAttribute("type", "maybe");
+        }, 10000);
       }
     }
 
