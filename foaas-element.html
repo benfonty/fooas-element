@@ -1,0 +1,36 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="foaas-element">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <h2>Hello [[prop1]]!</h2>
+  </template>
+
+  <script>
+    /**
+     * `foaas-element`
+     * This component will help you add the contents provided by www.foaas.com
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class FoaasElement extends Polymer.Element {
+      static get is() { return 'foaas-element'; }
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'foaas-element'
+          }
+        };
+      }
+    }
+
+    window.customElements.define(FoaasElement.is, FoaasElement);
+  </script>
+</dom-module>
