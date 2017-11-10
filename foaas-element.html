@@ -9,12 +9,9 @@
         display: inline;
       }
     </style>
-    <iron-ajax id="foaas_load" handle-as="json" headers='{"Accept": "application/json"}' loading="{{loading}}">
+    <iron-ajax id="foaas_load" handle-as="json" headers='{"Accept": "application/json"}'>
     </iron-ajax>
-    <div hidden$="[[!loading]]">
-      <paper-spinner active="{{loading}}"></paper-spinner>
-    </div>
-    <div hidden$="[[loading]]">
+    <div>
       <div id="foaas_content"></div>
       <div id="foaas_signature"></div>
     </div>
@@ -35,8 +32,9 @@
         return {
           loading: {
             type: Boolean,
-            notify: true,
-            value: false
+            value: false,
+            notify:true,
+            ReadOnly:true
           },
           type: String,
           from: String,
@@ -60,6 +58,7 @@
 
       connectedCallback() {
         super.connectedCallback();
+        this.loading = true;
         this._loadTypeDescriptions()
         .then(this._processDescriptions.bind(this))
         .then(this._processResponse.bind(this))
@@ -77,10 +76,12 @@
         let foaas_response = response.__data.response;
         this.$.foaas_content.textContent = foaas_response.message;
         this.$.foaas_signature.textContent = foaas_response.subtitle;
+        this.loading=false;
       }
 
       _processError(error) {
         this.$.foaas_content.textContent = "oups, there was a problem with you giving a fuck";
+        this.loading = false;
       }
 
       _generateUrl() {
@@ -103,8 +104,7 @@
 
       _processDescriptions(response) {
         let foaas_response = response.__data.response;
-        console.log(foaas_response[0].url);
-        for (let elem of foaas_response) {
+        for (let elem of foaas_response) { // forEach doesn't work here. wtf ?
           let tab_api = elem.url.split('/');
           // The second item of the url is the type (because the url begins with "/")
           // Then comes the list of parameters. Every parameter begins with a ':'

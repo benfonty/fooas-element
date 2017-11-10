@@ -1,0 +1,45 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../foaas-element.html">
+
+<dom-module id="foaas-demo-loading">
+  <template>
+    <style>
+       :host {
+        display: inline;
+      }
+    </style>
+    <div hidden$="[[!foaasLoading]]">
+      <paper-spinner active="{{foaasLoading}}"></paper-spinner>
+    </div>
+    <foaas-element hidden$="[[foaasLoading]]" type="awesome" from="benoit" loading="{{foaasLoading}}"></foaas-element>
+  </template>
+
+  <script>
+    /**
+     * `foaas-element`
+     * This component will help you add the contents provided by www.foaas.com
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class FoaasDemoLoading extends Polymer.Element {
+      static get is() { return 'foaas-demo-loading'; }
+      static get properties() {
+        return {
+          foaasLoading: {
+            type: Boolean,
+            value: false,
+            observer:'_loading'
+          }
+        };
+      }
+      _loading(newValue, oldValue) {
+        console.log(newValue);
+      }
+    }
+
+    window.customElements.define(FoaasDemoLoading.is, FoaasDemoLoading);
+  </script>
+</dom-module>
