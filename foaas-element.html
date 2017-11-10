@@ -37,20 +37,35 @@
             type: Boolean,
             notify: true,
             value: false
-          }
+          },
+          type: String,
+          from: String,
+          company: String,
+          name: String,
+          tool: String,
+          something: String,
+          reference: String,
+          noun: String,
+          reaction: String,
+          behaviour: String,
+          thing: String
         };
+      }
+
+      constructor() {
+        super();
+        this._type_descriptions = {};
+        this.URL = "http://foaas.com/";
       }
 
       connectedCallback() {
         super.connectedCallback();
-        Polymer.RenderStatus.afterNextRender(this, function () {
-          this._loadFoaas();
-        });
+        this._loadTypeDescriptions();
       }
 
       _loadFoaas() {
         let ajax = this.$.foaas_load;
-        ajax.url = "http://foaas.com/asshole/ben";
+        ajax.url = this._generateUrl();
         let self = this;
         ajax.generateRequest().completes.then(response => {
           self._processResponse(response);
@@ -58,7 +73,6 @@
           self._processError(error);
         });
       }
-
 
       _processResponse(response) {
         let foaas_response = response.__data.response;
@@ -68,6 +82,40 @@
 
       _processError(error) {
         this.$.foaas_content.textContent = "oups, there was a problem with you giving a fuck";
+      }
+
+      _generateUrl() {
+        let url = this.URL;
+        // First we add the type
+        url += this.type + "/";
+        // Then the parameters
+        // We are using the fact that the properties of the component have 
+        // the same name than the parameters in the description
+        url += this._type_descriptions[this.type].map(elem => this[elem]).join("/");
+        return url;
+      }
+
+      _loadTypeDescriptions() {
+        let ajax = this.$.foaas_load;
+        ajax.url = this.URL + "operations";
+        let self = this;
+        ajax.generateRequest().completes.then(response => {
+          self._processDescriptions(response);
+        });
+      }
+
+      _processDescriptions(response) {
+        let foaas_response = response.__data.response;
+        console.log(foaas_response[0].url);
+        for (let elem of foaas_response) {
+          let tab_api = elem.url.split('/');
+          // The second item of the url is the type (because the url begins with "/")
+          // Then comes the list of parameters. Every parameter begins with a ':'
+          tab_api.shift();
+          let type = tab_api.shift();
+          this._type_descriptions[type] = tab_api.map(elem => elem.substring(1));
+        }
+        this._loadFoaas();
       }
     }
 
