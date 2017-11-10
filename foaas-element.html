@@ -1,5 +1,6 @@
 <link rel="import" href="bower_components/polymer/polymer-element.html">
 <link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="bower_components/paper-spinner/paper-spinner.html">
 
 <dom-module id="foaas-element">
   <template>
@@ -8,10 +9,15 @@
         display: inline;
       }
     </style>
-    <iron-ajax id="foaas_load" handle-as="json" headers='{"Accept": "application/json"}'>
+    <iron-ajax id="foaas_load" handle-as="json" headers='{"Accept": "application/json"}' loading="{{loading}}">
     </iron-ajax>
-    <div id="foaas_content"></div>
-    <div id="foaas_signature"></div>
+    <div hidden$="[[!loading]]">
+      <paper-spinner active="{{loading}}"></paper-spinner>
+    </div>
+    <div hidden$="[[loading]]">
+      <div id="foaas_content"></div>
+      <div id="foaas_signature"></div>
+    </div>
   </template>
 
   <script>
@@ -27,15 +33,16 @@
       static get is() { return 'foaas-element'; }
       static get properties() {
         return {
-          prop1: {
-            type: String,
-            value: 'foaas-element'
+          loading: {
+            type: Boolean,
+            notify: true,
+            value: false
           }
         };
       }
 
-      ready() {
-        super.ready();
+      connectedCallback() {
+        super.connectedCallback();
         Polymer.RenderStatus.afterNextRender(this, function () {
           this._loadFoaas();
         });
@@ -47,7 +54,7 @@
         let self = this;
         ajax.generateRequest().completes.then(response => {
           self._processResponse(response);
-        },error => {
+        }, error => {
           self._processError(error);
         });
       }
