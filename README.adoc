@@ -1,0 +1,57 @@
+:foaas: http://www.foaas.com[foaas.com]
+
+= <foaas-element>
+
+`<foaas-element>` will help you to add to your site quotes provided by {foaas}.
+
+[source,xml]
+<foaas-element type="keepcalm" from="The bartender" reaction="drink beer">
+</foaas-element>
+
+Keep the fuck calm and drink beer! +
+- The bartender
+
+== How does it work
+
+The elment loads a quote from {foaas} and displays it.
+
+The type of the quote corresponds to the `type` attribute of the element.
+
+The other attributes are parameters that depends of the type of the quote. 
+A `from` is always required.
+For a mapping between the types of quote and the parameters required, please read {foaas}.
+A default value is provided for all the parameters.
+
+== Quote reloading
+
+Another quote is automatically reloaded when the `type` attribute is setted.
+If you want to set the according parameters to the type of quote, be carefull that the `type` attribute must be the last setted.
+
+== `loading` attribute
+
+During the time when the quote is loaded, a `loading` attribute is set to the element.
+You can bind to this attribute in order to do something special during loading (for example display a `<paper-spinner>`).
+
+== Custom style
+
+The inner of the element consists of two parts:
+
+* the quote itself
+* the signature of the quote (from the `from` attribute)
+
+You can define a custom style for the element using https://www.polymer-project.org/2.0/docs/devguide/custom-css-properties#use-custom-css-mixins[CSS mixins] :
+
+* `--foaas-element-theme` mixin enables custom CSS properties for the whole elelement
+* `--foaas-element-quote-theme` mixin enables custom CSS properties for the quote
+* `--foaas-element-signature-theme` mixin enables custom CSS properties for the signature
+
+== Demo
+
+There is a little demo of the element.
+
+First, make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed. Then run `polymer serve` to serve your element locally.
+
+```
+$ polymer serve
+```
+And then copy-paste the url given by polymer to your favorite browser.
