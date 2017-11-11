@@ -1,17 +1,26 @@
 <link rel="import" href="bower_components/polymer/polymer-element.html">
 <link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="bower_components/shadycss/apply-shim.html">
 
 <dom-module id="foaas-element">
   <template>
     <style>
       :host {
-        display: inline;
+        display: inline; 
+      }
+      #foaas {
+        @apply --foaas-element-theme;
+      }
+      #foaas_content {
+        @apply --foaas-element-quote-theme;
+      }
+      #foaas_signature {
+        @apply --foaas-element-signature-theme;
       }
     </style>
     <iron-ajax id="foaas_load" handle-as="json" headers='{"Accept": "application/json"}'>
     </iron-ajax>
-    <div>
+    <div id="foaas">
       <div id="foaas_content"></div>
       <div id="foaas_signature"></div>
     </div>
