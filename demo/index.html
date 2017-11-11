@@ -1,32 +1,68 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>foaas-element demo</title>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <title>foaas-element demo</title>
 
-    <link rel="import" href="../bower_components/iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../bower_components/iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="../foaas-element.html">
-    <link rel="import" href="./foaas-demo-loading.html">
+  <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
 
-    <custom-style>
-      <style is="custom-style" include="demo-pages-shared-styles">
-      </style>
-    </custom-style>
-  </head>
-  <body>
-    <div class="vertical-section-container centered">
-      <h3>Basic foaas-element demo</h3>
-      <demo-snippet>
-        <template>
-          <foaas-element type="greed" from="benoît" noun="ben"></foaas-element>
-          <foaas-demo-loading></foaas-demo-loading>
-        </template>
-      </demo-snippet>
-    </div>
-  </body>
+  <link rel="import" href="../bower_components/iron-demo-helpers/demo-pages-shared-styles.html">
+  <link rel="import" href="../bower_components/iron-demo-helpers/demo-snippet.html">
+  <link rel="import" href="../foaas-element.html">
+  <link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+
+  <custom-style>
+    <style is="custom-style" include="demo-pages-shared-styles">
+    </style>
+  </custom-style>
+  <script>
+    function change_foaas() {
+      let types = ["anyway", "asshole", "awesome", "back", "bag", "ballmer", "bday", "because", "blackadder", "bm", "bucket", "bus", "bye", "caniuse", "chainsaw", "cocksplat", "cool", "cup", "dalton", "deraadt", "diabetes", "donut", "dosomething", "everyone", "everything", "family", "fascinating", "field", "flying", "fyyff", "gfy", "give", "greed", "horse", "immensity", "ing", "keep", "keepcalm", "king", "life", "linus", "look", "looking", "madison", "maybe", "me", "mornin", "no", "nugget", "off"];
+      let type = types[Math.floor(Math.random() * types.length)];
+      let myelement = document.querySelector("foaas-element");
+      myelement.setAttribute("type", type);
+    }
+    function reload_foaas() {
+      change_foaas();
+      setTimeout(() => {
+        reload_foaas();
+      }, 10000);
+    }
+    function go() {
+      setTimeout(() => {
+        reload_foaas();
+      }, 10000);
+    }
+  </script>
+</head>
+
+<body onload="go();">
+  <div class="vertical-section-container centered">
+    <h3>Basic foaas-element demo</h3>
+    <p>
+        The quote changes every 10 sec.
+        <br/>
+        <span style="font-style: italic;">I can't figure out why the code of the demo-snipper doesn't updates then.</span>
+      </p>
+    <demo-snippet>
+      <template>
+        <dom-bind>
+          <template>
+            <div hidden$="[[!foaasLoading]]">
+              <paper-spinner active="[[foaasLoading]]"></paper-spinner>
+            </div>
+            <div hidden$="[[foaasLoading]]">
+              <foaas-element id="myelement" type="awesome" from="Arsène Lupin" name="my friend" something="lava lamp" tool="computer" company="acme"
+                do="throw" reference="W3C" noun="ben" reaction="code" language="javascript" loading="{{foaasLoading}}"></foaas-element>
+            </div>
+          </template>
+        </dom-bind>
+      </template>
+    </demo-snippet>
+  </div>
+</body>
+
 </html>
