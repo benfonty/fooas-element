@@ -6,14 +6,17 @@
   <template>
     <style>
       :host {
-        display: inline; 
+        display: inline;
       }
+
       #foaas {
         @apply --foaas-element-theme;
       }
+
       #foaas_content {
         @apply --foaas-element-quote-theme;
       }
+
       #foaas_signature {
         @apply --foaas-element-signature-theme;
       }
@@ -48,18 +51,20 @@
           },
           type: {
             type: String,
-            observer:'_typeChanged'
+            observer: '_typeChanged'
           },
-          from: String,
-          company: String,
-          name: String,
-          tool: String,
-          something: String,
-          reference: String,
-          noun: String,
-          reaction: String,
-          behaviour: String,
-          thing: String
+          from: { type: String, value: 'Arsène Lupin' },
+          company: { type: String, value: 'Acme' },
+          name: { type: String, value: 'My friend' },
+          tool: { type: String, value: 'computer' },
+          something: { type: String, value: 'lava lamp' },
+          reference: { type: String, value: 'W3C' },
+          noun: { type: String, value: 'ben' },
+          reaction: { type: String, value: 'code' },
+          behavior: { type: String, value: 'behavior' },
+          thing: { type: String, value: 'the thing' },
+          do: { type: String, value: 'throw' },
+          language: { type: String, value: 'javascript' }
         };
       }
 
