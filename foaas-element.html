@@ -5,7 +5,7 @@
 <dom-module id="foaas-element">
   <template>
     <style>
-       :host {
+      :host {
         display: inline;
       }
 
@@ -81,27 +81,22 @@
         }
       }
 
-      _loadFoaas() {
+      async _loadFoaas() {
         this.loading = true;
-        this._loadAndProcessDescriptionIfNecessary()
-          .then(this._loadQuote.bind(this))
-          .then(this._processResponseQuote.bind(this))
-          .catch(this._processError.bind(this));
-      }
-
-      _loadAndProcessDescriptionIfNecessary() {
-        if (this._type_descriptions === undefined) {
-          // First time : we have to load the list of operations
-          return this._loadTypeDescriptions()
-            .then(this._processDescriptions.bind(this));
+        try {
+          if (this._type_descriptions === undefined) {
+            let description = await this._loadTypeDescriptions();
+            this._processDescriptions(description);
+          }
+          let quote = await this._loadQuote();
+          this._processResponseQuote(quote);
         }
-        else {
-          // return dummy promise 
-          return Promise.resolve();
+        catch (e) {
+          this._processError(e);
         }
       }
 
-      _loadQuote() {
+      async _loadQuote() {
         let ajax = this.$.foaas_load;
         ajax.url = this._generateUrl();
         return ajax.generateRequest().completes;
@@ -130,7 +125,7 @@
         return url;
       }
 
-      _loadTypeDescriptions() {
+      async _loadTypeDescriptions() {
         let ajax = this.$.foaas_load;
         ajax.url = FoaasElement.URL + "operations";
         return ajax.generateRequest().completes;
